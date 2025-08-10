@@ -1,4 +1,5 @@
 import mongoose, { model } from "mongoose"
+import { required } from "zod/v4/core/util.cjs"
 const Schema=mongoose.Schema
 const ObjectId=Schema.ObjectId
 
@@ -18,12 +19,12 @@ const ContentSchema=new Schema({
 
 
 const LinkSchema=new Schema({
-    hash:String,
-    useId:ObjectId
+    hash:{type:String,required:true},
+    useId:{type:ObjectId,ref:"users",required:true}
 })
 
 const TagSchema=new Schema({
-
+    title:{type:String,required:true,unique:true}
 })
 
 export const Usermodel=mongoose.model('users',UserSchema)
