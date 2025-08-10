@@ -121,6 +121,9 @@ app.delete('/api/v1/content',async (req,res)=>{
         //@ts-ignore
         userId:req.userId
     })
+    res.json({
+        message:"deleted"
+    })
 })
 
 
