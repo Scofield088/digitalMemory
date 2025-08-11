@@ -20,7 +20,7 @@ const ContentSchema=new Schema({
 
 const LinkSchema=new Schema({
     hash:{type:String,required:true},
-    useId:{type:ObjectId,ref:"users",required:true}
+    userId:{type:ObjectId,ref:"users",required:true}
 })
 
 const TagSchema=new Schema({
