@@ -7,8 +7,9 @@ import cors from "cors"
 import dotenv from 'dotenv'
 import { userMiddleware } from "./middleware"
 dotenv.config();
-import { Usermodel,Contentmodel } from "./db"
+import { Usermodel,Contentmodel, LinkModel } from "./db"
 import { mongo } from "mongoose"
+import { random } from "./util"
 
 
 
@@ -86,8 +87,7 @@ app.post('/api/v1/signin',async (req,res)=>{
     }
 })
 
-app.use(userMiddleware)
-app.post('/api/v1/content',async (req,res)=>{
+app.post('/api/v1/content',userMiddleware,async (req,res)=>{
     const {link,title}=req.body
     await Contentmodel.create({
         link,
@@ -103,7 +103,7 @@ app.post('/api/v1/content',async (req,res)=>{
 
 
 
-app.get('/api/v1/content',async (req,res)=>{
+app.get('/api/v1/content',userMiddleware,async (req,res)=>{
     //@ts-ignore
     const userId=req.userId
     const content=await Contentmodel.findOne({userId}).populate("userId","username")
@@ -114,7 +114,7 @@ app.get('/api/v1/content',async (req,res)=>{
 
 
 
-app.delete('/api/v1/content',async (req,res)=>{
+app.delete('/api/v1/content',userMiddleware,async (req,res)=>{
     const contentId=req.body.contentId
     await Contentmodel.deleteMany({
         contentId,
@@ -128,13 +128,63 @@ app.delete('/api/v1/content',async (req,res)=>{
 
 
 
-app.post('/api/v1/brain/share',(req,res)=>{
-
+app.post('/api/v1/brain/share',userMiddleware,async (req,res)=>{
+    const {share}=req.body
+    if(share){
+        const exist=await LinkModel.findOne({
+            //@ts-ignore
+            userId:req.userId
+        })
+        if(exist){
+            res.json({
+                hash:exist.hash
+            })
+            return
+        }
+        const hash=random(10)
+        await LinkModel.create({
+            //@ts-ignore
+            userId:req.userId,
+            hash:hash
+        })
+        res.json({
+            message:"/share"+hash
+        })
+    }else{
+        await LinkModel.deleteOne({
+            //@ts-ignore
+            userId:req.userId
+        })
+        res.json({
+        message:"updated link"
+        })
+    }
 })
 
 
-app.get('/api/v1/brain/:sharelink',(req,res)=>{
-
+app.get('/api/v1/brain/:shareLink',async (req,res)=>{
+    const hash=req.params.shareLink
+    const link=await LinkModel.findOne({hash})
+    if(!link){
+        res.send("Sorry incorrect input ")
+        return
+    }
+    const content=await Contentmodel.find({
+        //@ts-ignore
+        userId:link.userId
+    })
+    const user=await Usermodel.findOne({
+        //@ts-ignore
+        _id:link.userId
+    })
+    if(!user){
+        res.send("user not found")
+        return
+    }
+    res.json({
+        username:user.username,
+        content: content
+    })
 })
 
 async function main() {
