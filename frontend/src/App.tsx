@@ -1,4 +1,4 @@
-import Dashboard from "./Pages/dashboard"
+import {Dashboard} from "./Pages/dashboard"
 import { Signin } from "./Pages/Signin"
 import { Signup } from "./Pages/Signup"
 import { BrowserRouter,Routes,Route } from "react-router-dom"
