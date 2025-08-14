@@ -1,6 +1,6 @@
-import Dashboard from "./Pages.tsx/dashboard"
-import { Signin } from "./Pages.tsx/Signin"
-import { Signup } from "./Pages.tsx/Signup"
+import Dashboard from "./Pages/dashboard"
+import { Signin } from "./Pages/Signin"
+import { Signup } from "./Pages/Signup"
 import { BrowserRouter,Routes,Route } from "react-router-dom"
 function App() {
     return <BrowserRouter>
