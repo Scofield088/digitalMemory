@@ -14,6 +14,7 @@ const ContentSchema=new Schema({
     link:String,
     title:String,
     tags:[{type:ObjectId,ref:'tags'}],
+    type:String,
     userId:{type:ObjectId,ref:'users',required:true}
 })
 
